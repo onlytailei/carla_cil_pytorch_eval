@@ -73,6 +73,13 @@ class ImitationLearning(Agent):
 
         variables_to_restore = tf.global_variables()
 
+        variables_to_restore = [var for var in variables_to_restore
+                                if "Branch_4" not in var.name
+                                and "W_f_18" not in var.name
+                                and "W_f_19" not in var.name
+                                and "W_f_20" not in var.name
+                                ]
+        #print(variables_to_restore)
         saver = tf.train.Saver(variables_to_restore, max_to_keep=0)
 
         if not os.path.exists(self._models_path):
@@ -81,6 +88,8 @@ class ImitationLearning(Agent):
         ckpt = tf.train.get_checkpoint_state(self._models_path)
         if ckpt:
             print('Restoring from ', ckpt.model_checkpoint_path)
+            vars_in_checkpoint = tf.train.list_variables(self._models_path)
+            #print(vars_in_checkpoint)
             saver.restore(self._sess, ckpt.model_checkpoint_path)
         else:
             ckpt = 0
