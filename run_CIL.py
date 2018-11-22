@@ -1,6 +1,7 @@
 import argparse
 import logging
-
+import sys
+sys.path.append("../")
 from carla.driving_benchmark import run_driving_benchmark
 from carla.driving_benchmark.experiment_suites import CoRL2017
 
