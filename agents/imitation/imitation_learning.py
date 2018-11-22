@@ -51,10 +51,11 @@ class ImitationLearning(Agent):
 
             self._dout = tf.placeholder("float", shape=[len(self.dropout_vec)])
 
-        with tf.name_scope("Network"):
-            self._network_tensor = load_imitation_learning_network(self._input_images,
-                                                                   self._input_data,
-                                                                   self._image_size, self._dout)
+        with tf.variable_scope("controlNET") as scope:
+            with tf.name_scope("Network"):
+                self._network_tensor = load_imitation_learning_network(self._input_images,
+                                                                       self._input_data,
+                                                                       self._image_size, self._dout)
 
         import os
         dir_path = os.path.dirname(__file__)
@@ -138,6 +139,7 @@ class ImitationLearning(Agent):
             (1, self._image_size[0], self._image_size[1], self._image_size[2]))
 
         # Normalize with the maximum speed from the training set ( 90 km/h)
+        print("==========speed==========", speed)
         speed = np.array(speed / 25.0)
 
         speed = speed.reshape((1, 1))
