@@ -22,22 +22,20 @@ class ImitationLearning(Agent):
 
         dir_path = os.path.dirname(__file__)
 
-        self._models_path = dir_path + '/model/'
+        self._models_path = dir_path + '/model_torch/model.pth'
 
-        # tf.reset_default_graph()
-        # self._sess.run(tf.global_variables_initializer())
         self.model = CarlaNet()
         self.model.eval()
         self.load_model()
 
         self._image_cut = image_cut
 
-    def load_model(self, path_):
+    def load_model(self):
 
-        if not os.path.exists(path_):
+        if not os.path.exists(self._models_path):
             raise RuntimeError('failed to find the models path')
 
-        checkpoint = torch.load(path_)
+        checkpoint = torch.load(self._models_path)
         self.model.load_state_dict(checkpoint['state_dict'])
 
     def run_step(self, measurements, sensor_data, directions, target):
