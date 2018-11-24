@@ -1,13 +1,14 @@
 
 import os
 import scipy
+import scipy.misc
 
 import torch
 import numpy as np
 
 from carla.agent import Agent
 from carla.carla_server_pb2 import Control
-from carla_net import CarlaNet
+from agents.imitation.carla_net import CarlaNet
 
 
 class ImitationLearning(Agent):
@@ -25,6 +26,7 @@ class ImitationLearning(Agent):
         self._models_path = dir_path + '/model_torch/model.pth'
 
         self.model = CarlaNet()
+        self.model.cuda()
         self.model.eval()
         self.load_model()
 
@@ -56,7 +58,7 @@ class ImitationLearning(Agent):
 
         image_input = image_input.astype(np.float32)
         image_input = np.expand_dims(
-            np.transpose(image_input, (1, 2, 0)),
+            np.transpose(image_input, (2, 0, 1)),
             axis=0)
 
         image_input = np.multiply(image_input, 1.0 / 255.0)
@@ -97,14 +99,14 @@ class ImitationLearning(Agent):
         with torch.no_grad():
             branches, pred_speed = self.model(img_ts, speed_ts)
 
-        pred_result = branches[
+        pred_result = branches[0][
             3*control_input:3*(control_input+1)].cpu().numpy()
 
-        predicted_steers = (pred_result[0][0])
+        predicted_steers = (pred_result[0])
 
-        predicted_acc = (pred_result[0][1])
+        predicted_acc = (pred_result[1])
 
-        predicted_brake = (pred_result[0][2])
+        predicted_brake = (pred_result[2])
 
         if self._avoid_stopping:
             predicted_speed = pred_speed.squeeze().item()
