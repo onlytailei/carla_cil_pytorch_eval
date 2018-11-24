@@ -5,7 +5,7 @@ sys.path.append("../")
 from carla.driving_benchmark import run_driving_benchmark
 from carla.driving_benchmark.experiment_suites import CoRL2017
 
-from agents.imitation.imitation_learning import ImitationLearning
+from agents.imitation.imitation_learning_pytorch import ImitationLearning
 
 try:
     from carla import carla_server_pb2 as carla_protocol
