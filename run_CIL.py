@@ -1,14 +1,15 @@
 import argparse
 import logging
 import sys
-sys.path.append("../")
-from carla.driving_benchmark import run_driving_benchmark
-from carla.driving_benchmark.experiment_suites import CoRL2017
-
-from agents.imitation.imitation_learning_pytorch import ImitationLearning
 
 try:
-    from carla import carla_server_pb2 as carla_protocol
+    sys.path.append("../")
+    # from carla import carla_server_pb2 as carla_protocol
+    from carla.driving_benchmark import run_driving_benchmark
+    # from carla.driving_benchmark.experiment_suites import CoRL2017
+
+    from agents.imitation.imitation_learning_pytorch import ImitationLearning
+    from benchmarks.vrg_transfer import VrgTransferSuite
 except ImportError:
     raise RuntimeError(
         'cannot import "carla_server_pb2.py", run the protobuf compiler to generate this file')
@@ -80,6 +81,14 @@ if (__name__ == '__main__'):
         action='store_true',
         help='visualize the image and transfered image through tensorflow'
     )
+    argparser.add_argument(
+        '--weathers',
+        nargs='+',
+        type=int,
+        default=[1],
+        help='weather list 1:clear 3:wet, 6:rain 8:sunset',
+        required=True
+    )
 
     args = argparser.parse_args()
 
@@ -96,9 +105,10 @@ if (__name__ == '__main__'):
                               args.visualize
                               )
 
-    corl = CoRL2017(args.city_name)
+    # experiment_suites = CoRL2017(args.city_name)
+    experiment_suites = VrgTransferSuite(args.city_name, args.weathers)
 
     # Now actually run the driving_benchmark
-    run_driving_benchmark(agent, corl, args.city_name,
+    run_driving_benchmark(agent, experiment_suites, args.city_name,
                           args.log_name, args.continue_experiment,
                           args.host, args.port)
