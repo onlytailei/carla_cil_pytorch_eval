@@ -15,9 +15,9 @@ class ImitationLearning(Agent):
 
     def __init__(self, city_name,
                  avoid_stopping=True,
-                 model_path='policy_model.pth',
+                 model_path='policy.pth',
                  vrg_transfer=False,
-                 vrg_model_path='transfer_model.pth',
+                 vrg_model_path='transfer.pth',
                  image_cut=[115, 510]):
 
         super(ImitationLearning, self).__init__()
@@ -29,8 +29,7 @@ class ImitationLearning(Agent):
         dir_path = os.path.dirname(__file__)
 
         self._models_path = os.path.join(
-            dir_path, '/model/', model_path)
-
+            dir_path+'/model/', model_path)
         self.model = CarlaNet()
         if torch.cuda.is_available():
             self.model.cuda()
@@ -40,12 +39,11 @@ class ImitationLearning(Agent):
         self.vrg_transfer = vrg_transfer
         if vrg_transfer:
             self._vrg_models_path = os.path.join(
-                dir_path, '/model/', vrg_model_path)
+                dir_path+'/model/', vrg_model_path)
             dtype = torch.cuda.FloatTensor \
                 if torch.cuda.is_available() else torch.FloatTensor
             self.transfer_model = define_G(
-                input_cha=3, output_cha=3, netG_cha=64,
-                netG_model="resnet_9blocks", norm="instance", no_dropout=True,
+                3, 3, 64, "resnet_9blocks", norm="instance", use_dropout=True,
                 enable_progressive=False, progress_start=1,
                 progress_chas=[256, 128, 64, 32, 16], dtype=dtype)
             if torch.cuda.is_available():
@@ -129,11 +127,9 @@ class ImitationLearning(Agent):
 
         if self.vrg_transfer:
             with torch.no_grad():
-                # 0,1
-                # transfer 0,1 to -1,1
-                # then forward img = self.transfer_model(img)
-                pass
-                # should output 0,1 as well
+                img_ts = img_ts * 2 - 1
+                img_ts = self.transfer_model.forward_seq(img_ts)
+                img_ts = (img_ts + 1) / 2.0
 
         with torch.no_grad():
             branches, pred_speed = self.model(img_ts, speed_ts)

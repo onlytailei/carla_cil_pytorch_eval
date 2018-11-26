@@ -19,7 +19,6 @@ def weights_init(m):
         m.weight.data.normal_(1.0, 0.02)
         m.bias.data.fill_(0)
 
-
 def get_norm_layer(norm_type='instance'):
     if norm_type == 'batch':
         norm_layer = functools.partial(nn.BatchNorm2d, affine=True)
@@ -28,7 +27,6 @@ def get_norm_layer(norm_type='instance'):
     else:
         raise NotImplementedError('normalization layer [%s] is not found' % norm)
     return norm_layer
-
 
 def define_G(input_nc, output_nc, ngf, which_model_netG, norm='batch', use_dropout=False,
              enable_progressive=False, progress_start=0, progress_chas=[], progress_inc=2, progress_kernel=3,
@@ -56,7 +54,6 @@ def define_G(input_nc, output_nc, ngf, which_model_netG, norm='batch', use_dropo
     netG.apply(weights_init)
     return netG
 
-
 def define_D(input_nc, ndf, which_model_netD, n_layers_D=3, norm='batch', use_sigmoid=False,
              enable_progressive=False, progress_start=0, progress_chas=[], progress_inc=2, progress_kernel=3,
              enable_round_input_D=False):#, gpu_ids=[]):
@@ -81,7 +78,6 @@ def define_D(input_nc, ndf, which_model_netD, n_layers_D=3, norm='batch', use_si
     #     netD.cuda(device_id=gpu_ids[0])
     netD.apply(weights_init)
     return netD
-
 
 def define_styleD(input_nc, ndf, which_model_styleD, n_layers_D=3, norm='batch', use_sigmoid=False,
                   enable_progressive=False, progress_start=0, progress_chas=[], progress_inc=2, progress_kernel=3,
@@ -112,8 +108,6 @@ def define_styleD(input_nc, ndf, which_model_styleD, n_layers_D=3, norm='batch',
 # When LSGAN is used, it is basically same as MSELoss,
 # but it abstracts away the need to create the target label tensor
 # that has the same size as the input
-
-
 class GANLoss(nn.Module):
     def __init__(self, use_lsgan=True, target_real_label=1.0, target_fake_label=0.0,
                  dtype=torch.FloatTensor, enable_stable=False):
@@ -174,7 +168,6 @@ class GANLoss(nn.Module):
             output_loss = output_loss + self.loss(input, target_tensor)
             #print(self.loss(input,target_tensor))
         return output_loss
-
 
 # Defines the PatchGAN discriminator with the specified arguments.
 class NLayerDiscriminator(nn.Module):
@@ -299,7 +292,6 @@ class NLayerDiscriminator(nn.Module):
                 pass
         # print("output    size --->", output_vb.size())
         return [output_vb]
-
 
 # Defines the PatchGAN discriminator with the specified arguments.
 class StyleBasicDiscriminator(nn.Module):

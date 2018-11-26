@@ -8,7 +8,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
 
-from modules.convolution_lstm import ConvLSTMSeq
 
 # Defines the generator that consists of Resnet blocks between a few
 # downsampling/upsampling operations.
@@ -122,11 +121,6 @@ class ResnetGenerator(nn.Module):
 
             self.model_middle = nn.Sequential(*model)
 
-        if self.enable_lstm:
-            # self.lstm = ConvLSTMCell(input_channels=self.lstm_cha, hidden_channels=self.lstm_cha, kernel_size=5)
-            # self._reset_lstm_hidden_vb_episode()
-            # self._reset_lstm_hidden_vb_rollout()
-            self.lstm = ConvLSTMSeq(flo_mode=self.flo_mode, input_channels=self.lstm_cha, hidden_channels=[self.lstm_cha], kernel_size=5, dtype=self.dtype)
 
     # NOTE: to be called at the beginning of each new episode, clear up the hidden state
     def _reset_lstm_hidden_vb_episode(self, training=True): # seq_len, batch_size, hidden_dim
@@ -234,11 +228,8 @@ class ResnetGenerator(nn.Module):
                 return x_vb
         else:
             if not self.enable_progressive:
-		print("model_before")
                 x_vb = self.model_before(input_vb)
-		print("model_middle")
                 x_vb = self.model_middle(x_vb)
-		print("model_middle finished")
                 if self.enable_lstm:
                     lstm_outs_vb = []
                     # for j in range(self.flo_len):
@@ -248,8 +239,7 @@ class ResnetGenerator(nn.Module):
                         lstm_outs_vb.append(lstm_out_vb)
                     output_vb = self.model_after(torch.cat(lstm_outs_vb))
                 else:
-              	    print("no lstm model after --->") 
-     		    output_vb = self.model_after(x_vb)
+                    output_vb = self.model_after(x_vb)
             else:
                 pass
         # print("output    size --->", input_vb.size())
