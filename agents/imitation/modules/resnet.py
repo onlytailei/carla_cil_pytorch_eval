@@ -8,6 +8,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
 
+# from modules.convolution_lstm import ConvLSTMSeq
 
 # Defines the generator that consists of Resnet blocks between a few
 # downsampling/upsampling operations.
@@ -121,6 +122,11 @@ class ResnetGenerator(nn.Module):
 
             self.model_middle = nn.Sequential(*model)
 
+        # if self.enable_lstm:
+        #     # self.lstm = ConvLSTMCell(input_channels=self.lstm_cha, hidden_channels=self.lstm_cha, kernel_size=5)
+        #     # self._reset_lstm_hidden_vb_episode()
+        #     # self._reset_lstm_hidden_vb_rollout()
+        #     # self.lstm = ConvLSTMSeq(flo_mode=self.flo_mode, input_channels=self.lstm_cha, hidden_channels=[self.lstm_cha], kernel_size=5, dtype=self.dtype)
 
     # NOTE: to be called at the beginning of each new episode, clear up the hidden state
     def _reset_lstm_hidden_vb_episode(self, training=True): # seq_len, batch_size, hidden_dim

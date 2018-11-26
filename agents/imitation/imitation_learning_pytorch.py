@@ -18,6 +18,7 @@ class ImitationLearning(Agent):
                  model_path='policy.pth',
                  vrg_transfer=False,
                  vrg_model_path='transfer.pth',
+                 visualize=False,
                  image_cut=[115, 510]):
 
         super(ImitationLearning, self).__init__()
@@ -33,8 +34,8 @@ class ImitationLearning(Agent):
         self.model = CarlaNet()
         if torch.cuda.is_available():
             self.model.cuda()
-        self.model.eval()
         self.load_model()
+        self.model.eval()
 
         self.vrg_transfer = vrg_transfer
         if vrg_transfer:
@@ -43,13 +44,25 @@ class ImitationLearning(Agent):
             dtype = torch.cuda.FloatTensor \
                 if torch.cuda.is_available() else torch.FloatTensor
             self.transfer_model = define_G(
-                3, 3, 64, "resnet_9blocks", norm="instance", use_dropout=True,
+                3, 3, 64, "resnet_9blocks", norm="instance", use_dropout=False,
                 enable_progressive=False, progress_start=1,
-                progress_chas=[256, 128, 64, 32, 16], dtype=dtype)
+                progress_chas=[256, 128, 64, 32, 16], progress_inc=2,
+                progress_kernel=3, enable_lstm=False, flo_len=0,
+                flo_mode="max", flo_indices=[], batch_size=1, lstm_cha=256,
+                lstm_hei=64, lstm_wid=64, dtype=dtype)
             if torch.cuda.is_available():
                 self.transfer_model.cuda()
-            self.transfer_model.eval()
             self.load_transfer_model()
+            self.transfer_model.eval()
+
+            self.visualize = visualize
+            if self.visualize:
+                from tensorboardX import SummaryWriter
+                self.writer = SummaryWriter(
+                    os.path.join(
+                        dir_path+'/runs/',
+                        "carla_transfer_visualize"))
+                self.step = 0
 
         self._image_cut = image_cut
 
@@ -67,7 +80,7 @@ class ImitationLearning(Agent):
         for k, v in pretrained_dict.items():
             if 'netG_B' in k:
                 partial_dict[k[7:]] = pretrained_dict[k]
-        self.transfer_model.load_state_dict(partial_dict, False)
+        self.transfer_model.load_state_dict(partial_dict)
 
     def run_step(self, measurements, sensor_data, directions, target):
 
@@ -125,14 +138,22 @@ class ImitationLearning(Agent):
         img_ts = torch.from_numpy(image_input).cuda()
         speed_ts = torch.from_numpy(speed).cuda()
 
-        if self.vrg_transfer:
-            with torch.no_grad():
-                img_ts = img_ts * 2 - 1
-                img_ts = self.transfer_model.forward_seq(img_ts)
-                img_ts = (img_ts + 1) / 2.0
-
         with torch.no_grad():
-            branches, pred_speed = self.model(img_ts, speed_ts)
+            if self.vrg_transfer:
+                img_ts_trans = img_ts * 2 - 1
+                img_ts_trans = self.transfer_model.forward_seq(img_ts_trans)
+                img_ts_trans = (img_ts_trans + 1) / 2.0
+                if self.visualize:
+                    self.writer.add_image("carla_visual/origin",
+                                          img_ts[0],
+                                          self.step)
+                    self.writer.add_image("carla_visual/trans",
+                                          img_ts_trans[0],
+                                          self.step)
+                    self.step += 1
+                branches, pred_speed = self.model(img_ts_trans, speed_ts)
+            else:
+                branches, pred_speed = self.model(img_ts, speed_ts)
 
         pred_result = branches[0][
             3*control_input:3*(control_input+1)].cpu().numpy()

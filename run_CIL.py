@@ -74,6 +74,12 @@ if (__name__ == '__main__'):
         type=str,
         help='vrg transfer model path (relative in model dir)'
     )
+    argparser.add_argument(
+        '--visualize',
+        default=False,
+        action='store_true',
+        help='visualize the image and transfered image through tensorflow'
+    )
 
     args = argparser.parse_args()
 
@@ -86,7 +92,8 @@ if (__name__ == '__main__'):
                               args.avoid_stopping,
                               args.model_path,
                               args.vrg_transfer,
-                              args.vrg_model_path
+                              args.vrg_model_path,
+                              args.visualize
                               )
 
     corl = CoRL2017(args.city_name)
