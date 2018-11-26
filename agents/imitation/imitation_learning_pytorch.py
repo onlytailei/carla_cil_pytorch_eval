@@ -1,4 +1,3 @@
-
 import os
 import scipy
 import scipy.misc
@@ -13,18 +12,24 @@ from agents.imitation.carla_net import CarlaNet
 
 class ImitationLearning(Agent):
 
-    def __init__(self, city_name, avoid_stopping,
-                 memory_fraction=0.25, image_cut=[115, 510]):
-
-        Agent.__init__(self)
+    def __init__(self, city_name,
+                 avoid_stopping=True,
+                 model_path=None,
+                 vrg_transfer=False,
+                 vrg_model_path=False,
+                 image_cut=[115, 510]):
+        super(ImitationLearning, self).__init__()
+        # Agent.__init__(self)
 
         self._image_size = (88, 200, 3)
         self._avoid_stopping = avoid_stopping
 
         dir_path = os.path.dirname(__file__)
 
-        self._models_path = dir_path + '/model_torch/model.pth'
-
+        self._models_path = os.path.join(dir_path,
+                                         '/model/',
+                                         model_path)
+                                         
         self.model = CarlaNet()
         self.model.cuda()
         self.model.eval()
