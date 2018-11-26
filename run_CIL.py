@@ -55,6 +55,24 @@ if (__name__ == '__main__'):
         action='store_true',
         help='If you want to continue the experiment with the given log name'
     )
+    argparser.add_argument(
+        '--model-path',
+        metavar='P',
+        default='/models/',
+        type=str,
+        help='torch imitation learning model path (relative in model dir)'
+    )
+    argparser.add_argument(
+        '--vrg-transfer',
+        action='store_true',
+        help='If you want to enable model transfer'
+    )
+    argparser.add_argument(
+        '--vrg-model-path',
+        default='/models/',
+        type=str,
+        help='vrg transfer model path (relative in model dir)'
+    )
 
     args = argparser.parse_args()
 
@@ -63,7 +81,12 @@ if (__name__ == '__main__'):
 
     logging.info('listening to server %s:%s', args.host, args.port)
 
-    agent = ImitationLearning(args.city_name, args.avoid_stopping)
+    agent = ImitationLearning(args.city_name,
+                              args.avoid_stopping,
+                              args.model_path,
+                              args.vrg_transfer,
+                              args.vrg_model_path
+                              )
 
     corl = CoRL2017(args.city_name)
 
