@@ -59,7 +59,7 @@ if (__name__ == '__main__'):
     argparser.add_argument(
         '--model-path',
         metavar='P',
-        default='/model/policy.pth',
+        default='model/policy.pth',
         type=str,
         help='torch imitation learning model path (relative in model dir)'
     )
@@ -71,7 +71,7 @@ if (__name__ == '__main__'):
     )
     argparser.add_argument(
         '--vrg-model-path',
-        default='/model/transfer.pth',
+        default='model/transfer.pth',
         type=str,
         help='vrg transfer model path (relative in model dir)'
     )

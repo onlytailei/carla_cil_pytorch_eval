@@ -15,9 +15,9 @@ class ImitationLearning(Agent):
 
     def __init__(self, city_name,
                  avoid_stopping=True,
-                 model_path='/model/policy.pth',
+                 model_path="model/policy.pth",
                  vrg_transfer=False,
-                 vrg_model_path='/model/transfer.pth',
+                 vrg_model_path="model/transfer.pth",
                  visualize=False,
                  image_cut=[115, 510]):
 
@@ -28,9 +28,7 @@ class ImitationLearning(Agent):
         self._avoid_stopping = avoid_stopping
 
         dir_path = os.path.dirname(__file__)
-
-        self._models_path = os.path.join(
-            dir_path, model_path)
+        self._models_path = os.path.join(dir_path, model_path)
         self.model = CarlaNet()
         if torch.cuda.is_available():
             self.model.cuda()
@@ -68,13 +66,13 @@ class ImitationLearning(Agent):
 
     def load_model(self):
         if not os.path.exists(self._models_path):
-            raise RuntimeError('failed to find the models path')
+            raise RuntimeError('failed to find the models path: %s'%self._models_path)
         checkpoint = torch.load(self._models_path)
         self.model.load_state_dict(checkpoint['state_dict'])
 
     def load_transfer_model(self):
         if not os.path.exists(self._vrg_models_path):
-            raise RuntimeError('failed to find the models path')
+            raise RuntimeError('failed to find the models path: %s'%self._vrg_models_path)
         pretrained_dict = torch.load(self._vrg_models_path)
         partial_dict = {}
         for k, v in pretrained_dict.items():
