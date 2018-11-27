@@ -86,8 +86,7 @@ if (__name__ == '__main__'):
         nargs='+',
         type=int,
         default=[1],
-        help='weather list 1:clear 3:wet, 6:rain 8:sunset',
-        required=True
+        help='weather list 1:clear 3:wet, 6:rain 8:sunset'
     )
 
     args = argparser.parse_args()
