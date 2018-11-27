@@ -39,7 +39,7 @@ if (__name__ == '__main__'):
         help='The town that is going to be used on benchmark'
              + '(needs to match active town in server, options: Town01 or Town02)')
     argparser.add_argument(
-        '-n', '--log_name',
+        '-n', '--log-name',
         metavar='T',
         default='test',
         help='The name of the log file to be created by the scripts'
@@ -55,6 +55,13 @@ if (__name__ == '__main__'):
         '--continue-experiment',
         action='store_true',
         help='If you want to continue the experiment with the given log name'
+    )
+    argparser.add_argument(
+        '--weathers',
+        nargs='+',
+        type=int,
+        default=[1],
+        help='weather list 1:clear 3:wet, 6:rain 8:sunset'
     )
     argparser.add_argument(
         '--model-path',
@@ -80,13 +87,6 @@ if (__name__ == '__main__'):
         default=False,
         action='store_true',
         help='visualize the image and transfered image through tensorflow'
-    )
-    argparser.add_argument(
-        '--weathers',
-        nargs='+',
-        type=int,
-        default=[1],
-        help='weather list 1:clear 3:wet, 6:rain 8:sunset'
     )
 
     args = argparser.parse_args()
