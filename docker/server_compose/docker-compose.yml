@@ -17,14 +17,15 @@ services:
     networks:
       - carla_net
     working_dir: /home/carla/PythonClient/imitation_learning/
-    command: python run_CIL.py \
-             --host carla_env \
-             --log-name XXX \
-             --weathers 1 \
-             --model_path model/policy.pth \
-             --vrg-transfer \
-             --vrg-model-transfer model/transfer.pth \
-             --visualize
+    command:
+      python run_CIL.py
+      --host carla_env
+      --log-name XXX
+      --weathers 1
+      --model-path "model/policy.pth"
+      --vrg-transfer
+      --vrg-model-transfer "model/transfer.pth"
+      --visualize
 
 networks:
   carla_net:
