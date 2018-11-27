@@ -15,9 +15,9 @@ class ImitationLearning(Agent):
 
     def __init__(self, city_name,
                  avoid_stopping=True,
-                 model_path='policy.pth',
+                 model_path='/model/policy.pth',
                  vrg_transfer=False,
-                 vrg_model_path='transfer.pth',
+                 vrg_model_path='/model/transfer.pth',
                  visualize=False,
                  image_cut=[115, 510]):
 
@@ -30,7 +30,7 @@ class ImitationLearning(Agent):
         dir_path = os.path.dirname(__file__)
 
         self._models_path = os.path.join(
-            dir_path+'/model/', model_path)
+            dir_path, model_path)
         self.model = CarlaNet()
         if torch.cuda.is_available():
             self.model.cuda()
@@ -40,7 +40,7 @@ class ImitationLearning(Agent):
         self.vrg_transfer = vrg_transfer
         if vrg_transfer:
             self._vrg_models_path = os.path.join(
-                dir_path+'/model/', vrg_model_path)
+                dir_path, vrg_model_path)
             dtype = torch.cuda.FloatTensor \
                 if torch.cuda.is_available() else torch.FloatTensor
             self.transfer_model = define_G(
