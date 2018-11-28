@@ -69,13 +69,13 @@ class ImitationLearning(Agent):
     def load_model(self):
         if not os.path.exists(self._models_path):
             raise RuntimeError('failed to find the models path: %s'%self._models_path)
-        checkpoint = torch.load(self._models_path)
+        checkpoint = torch.load(self._models_path, map_location='cuda:0')
         self.model.load_state_dict(checkpoint['state_dict'])
 
     def load_transfer_model(self):
         if not os.path.exists(self._vrg_models_path):
             raise RuntimeError('failed to find the models path: %s'%self._vrg_models_path)
-        pretrained_dict = torch.load(self._vrg_models_path)
+        pretrained_dict = torch.load(self._vrg_models_path, map_location='cuda:0')
         partial_dict = {}
         if self.trans_direction == 'B2A':
             for k, v in pretrained_dict.items():
