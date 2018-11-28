@@ -83,6 +83,18 @@ if (__name__ == '__main__'):
         help='vrg transfer model path (relative in model dir)'
     )
     argparser.add_argument(
+        '--a2b',
+        default=False,
+        action='store_true',
+        help='transfer direction'
+    )
+    argparser.add_argument(
+        '--b2a',
+        default=False,
+        action='store_true',
+        help='transfer direction'
+    )
+    argparser.add_argument(
         '--visualize',
         default=False,
         action='store_true',
@@ -90,6 +102,15 @@ if (__name__ == '__main__'):
     )
 
     args = argparser.parse_args()
+
+    trans_direction = None
+    if args.vrg_transfer:
+        if args.a2b + args.b2a != 1:
+            raise RuntimeError('please set a direction for the transfer')
+        if args.a2b:
+            trans_direction = 'A2B'
+        else:
+            trans_direction = 'B2A'
 
     log_level = logging.DEBUG if args.debug else logging.INFO
     logging.basicConfig(format='%(levelname)s: %(message)s', level=log_level)
@@ -101,6 +122,7 @@ if (__name__ == '__main__'):
                               args.model_path,
                               args.vrg_transfer,
                               args.vrg_model_path,
+                              trans_direction,
                               args.visualize
                               )
 

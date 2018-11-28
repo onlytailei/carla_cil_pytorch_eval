@@ -18,6 +18,7 @@ class ImitationLearning(Agent):
                  model_path="model/policy.pth",
                  vrg_transfer=False,
                  vrg_model_path="model/transfer.pth",
+                 trans_direction="B2A",
                  visualize=False,
                  image_cut=[115, 510]):
 
@@ -37,6 +38,7 @@ class ImitationLearning(Agent):
 
         self.vrg_transfer = vrg_transfer
         if vrg_transfer:
+            self.trans_direction = trans_direction
             self._vrg_models_path = os.path.join(
                 dir_path, vrg_model_path)
             dtype = torch.cuda.FloatTensor \
@@ -75,9 +77,14 @@ class ImitationLearning(Agent):
             raise RuntimeError('failed to find the models path: %s'%self._vrg_models_path)
         pretrained_dict = torch.load(self._vrg_models_path)
         partial_dict = {}
-        for k, v in pretrained_dict.items():
-            if 'netG_B' in k:
-                partial_dict[k[7:]] = pretrained_dict[k]
+        if self.trans_direction == 'B2A':
+            for k, v in pretrained_dict.items():
+                if 'netG_B' in k:
+                    partial_dict[k[7:]] = pretrained_dict[k]
+        if self.trans_direction == 'A2B':
+            for k, v in pretrained_dict.items():
+                if 'netG_A' in k:
+                    partial_dict[k[7:]] = pretrained_dict[k]
         self.transfer_model.load_state_dict(partial_dict)
 
     def run_step(self, measurements, sensor_data, directions, target):
