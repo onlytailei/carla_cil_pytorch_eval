@@ -24,7 +24,7 @@ services:
       --weathers 1
       --model-path "model/policy.pth"
       --vrg-transfer
-      --vrg-model-transfer "model/transfer.pth"
+      --vrg-model-path "model/transfer.pth"
       --visualize
 
 networks:

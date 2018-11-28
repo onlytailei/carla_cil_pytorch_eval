@@ -121,6 +121,9 @@ class ImitationLearning(Agent):
         if speed > 10.0 and brake == 0.0:
             acc = 0.0
 
+        if np.abs(steer) > 0.15:
+            acc = acc * 0.4
+
         control = Control()
         control.steer = steer
         control.throttle = acc
