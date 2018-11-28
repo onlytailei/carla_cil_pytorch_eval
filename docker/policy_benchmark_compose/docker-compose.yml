@@ -7,11 +7,13 @@ services:
     networks:
       - carla_net0
     environment:
-      - NVIDIA_VISIBLE_DEVICES=0
+      - NVIDIA_VISIBLE_DEVICES=3
 
   policy_image0:
     image: onlytailei/pytorch:0.4.1-cuda9-tensorboardx
     runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=3
     volumes:
       - ${TAI_CARLA}:/home/carla/
     networks:
@@ -31,11 +33,13 @@ services:
     networks:
       - carla_net0
     environment:
-      - NVIDIA_VISIBLE_DEVICES=1
+      - NVIDIA_VISIBLE_DEVICES=3
 
   policy_image1:
     image: onlytailei/pytorch:0.4.1-cuda9-tensorboardx
     runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=3
     volumes:
       - ${TAI_CARLA}:/home/carla/
     networks:
@@ -55,11 +59,13 @@ services:
     networks:
       - carla_net0
     environment:
-      - NVIDIA_VISIBLE_DEVICES=2
+      - NVIDIA_VISIBLE_DEVICES=3
 
   policy_image2:
     image: onlytailei/pytorch:0.4.1-cuda9-tensorboardx
     runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=3
     volumes:
       - ${TAI_CARLA}:/home/carla/
     networks:
@@ -84,6 +90,8 @@ services:
   policy_image3:
     image: onlytailei/pytorch:0.4.1-cuda9-tensorboardx
     runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=3
     volumes:
       - ${TAI_CARLA}:/home/carla/
     networks:
