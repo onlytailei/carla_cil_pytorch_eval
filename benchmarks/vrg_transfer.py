@@ -56,10 +56,8 @@ class VrgTransferSuite(ExperimentSuite):
                     [30, 41], [18, 107], [69, 45], [102, 95], [18, 145],
                     [111, 64], [79, 45], [84, 69], [73, 31], [37, 81]]
 
-        # return [_poses_straight(),
-                # _poses_one_curve(),
-        return [_poses_navigation(),
-                _poses_navigation(),
+        return [_poses_straight(),
+                _poses_one_curve(),
                 _poses_navigation(),
                 _poses_navigation()]
 
@@ -112,10 +110,8 @@ class VrgTransferSuite(ExperimentSuite):
 
         if self._city_name == 'Town01':
             poses_tasks = self._poses_town01()
-            # vehicles_tasks = [0, 0, 0, 20]
-            # pedestrians_tasks = [0, 0, 0, 50]
-            vehicles_tasks = [20, 20, 20, 20]
-            pedestrians_tasks = [50, 50, 50, 50]
+            vehicles_tasks = [0, 0, 0, 20]
+            pedestrians_tasks = [0, 0, 0, 50]
         else:
             poses_tasks = self._poses_town02()
             vehicles_tasks = [0, 0, 0, 15]
