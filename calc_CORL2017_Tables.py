@@ -261,7 +261,7 @@ if (__name__ == '__main__'):
         path = allpath[idx]
         # weathers = statesSettings[state]['Weathers']
         # allPath = statesSettings[state]['Path']
-        weathers = [1, ]
+        weathers = [1, 3, 6, 8]
         # allPath =
 
         # This will make life easier for calculating std
@@ -285,7 +285,8 @@ if (__name__ == '__main__'):
                     for tIdx, t in enumerate(tasks):
                         metric_sum_values[count] += \
                             (float(sum(t)) / float(len(t))) \
-                            * 1.0 / float(len(weathers))
+                            * 1.0 
+                            #* 1.0 / float(len(weathers))
                         count += 1
 
             # array's elements displacement, this is because of std/avg calculation

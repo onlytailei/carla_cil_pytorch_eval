@@ -4,8 +4,9 @@
 
 python run_CIL.py \
   --log-name local_test \
-  --weathers 6 \
-  --model-path "model_policy/new_dataset_best.pth" \
-  --vrg-transfer \
-  --vrg-model-path "model_transfer/clear2rain_cg.pth" \
-  --visualize
+  --weathers 3 \
+  --model-path "model_policy/wet_policy_best.pth" \
+  #--vrg-transfer \
+  #--b2a \
+  #--vrg-model-path "model_transfer/clear2rain_cg.pth" \
+  #--visualize
