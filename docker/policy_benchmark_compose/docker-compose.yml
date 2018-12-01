@@ -22,12 +22,11 @@ services:
     command:
         python run_CIL.py
         --host carla_env0
-        --log-name clear_last_cg_wet
+        --log-name clear_policy_in_wet_cg_new
         --weathers 3
         --model-path "model_policy/clear_policy_last.pth"
         --vrg-transfer
-        --b2a
-        --vrg-model-path "model_transfer/clear2wet_cg.pth"
+        --vrg-model-path "model_transfer/clear2wet_cg_G_B.pth"
 
   carla_env1:
     image: carlasim/carla:0.8.2
@@ -36,13 +35,13 @@ services:
     networks:
       - carla_net0
     environment:
-      - NVIDIA_VISIBLE_DEVICES=0
+      - NVIDIA_VISIBLE_DEVICES=1
 
   policy_image1:
     image: onlytailei/pytorch:0.4.1-cuda9-tensorboardx
     runtime: nvidia
     environment:
-      - NVIDIA_VISIBLE_DEVICES=0
+      - NVIDIA_VISIBLE_DEVICES=1
     volumes:
       - ${TAI_CARLA}:/home/carla/
     networks:
@@ -51,12 +50,11 @@ services:
     command:
         python run_CIL.py
         --host carla_env1
-        --log-name clear_last_shift_wet
+        --log-name clear_policy_in_wet_shift500_new
         --weathers 3
         --model-path "model_policy/clear_policy_last.pth"
         --vrg-transfer
-        --b2a
-        --vrg-model-path "model_transfer/clear2wet_shift.pth"
+        --vrg-model-path "model_transfer/clear2wet_shift_500_G_B.pth"
 
   # carla_env2:
   #   image: carlasim/carla:0.8.2
