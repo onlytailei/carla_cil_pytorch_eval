@@ -23,11 +23,10 @@ services:
       python run_CIL.py
       --host carla_env
       --log-name localtest
-      --weathers 8
+      --weathers 3
       --model-path "model_policy/new_dataset_last.pth"
       --vrg-transfer
-      --b2a
-      --vrg-model-path "model_transfer/clear2sunset_shift.pth"
+      --vrg-model-path "model_transfer/clear2wet_cg_G_B.pth"
       --visual
 
 # b2a means policy train in A and deploy in B, vice versaize

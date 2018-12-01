@@ -8,7 +8,7 @@ import numpy as np
 from carla.agent import Agent
 from carla.carla_server_pb2 import Control
 from agents.imitation.modules.carla_net import CarlaNet
-from agents.imitation.modules.gan import define_G
+from agents.imitation.modules.networks import define_G
 
 
 class ImitationLearning(Agent):
@@ -18,8 +18,8 @@ class ImitationLearning(Agent):
                  model_path="model/policy.pth",
                  vrg_transfer=False,
                  vrg_model_path="model/transfer.pth",
-                 trans_direction="B2A",
                  visualize=False,
+                 log_name="test_log",
                  image_cut=[115, 510]):
 
         super(ImitationLearning, self).__init__()
@@ -38,18 +38,14 @@ class ImitationLearning(Agent):
 
         self.vrg_transfer = vrg_transfer
         if vrg_transfer:
-            self.trans_direction = trans_direction
             self._vrg_models_path = os.path.join(
                 dir_path, vrg_model_path)
-            dtype = torch.cuda.FloatTensor \
-                if torch.cuda.is_available() else torch.FloatTensor
+            # dtype = torch.cuda.FloatTensor \
+            #     if torch.cuda.is_available() else torch.FloatTensor
             self.transfer_model = define_G(
-                3, 3, 64, "resnet_9blocks", norm="instance", use_dropout=False,
-                enable_progressive=False, progress_start=1,
-                progress_chas=[256, 128, 64, 32, 16], progress_inc=2,
-                progress_kernel=3, enable_lstm=False, flo_len=0,
-                flo_mode="max", flo_indices=[], batch_size=1, lstm_cha=256,
-                lstm_hei=64, lstm_wid=64, dtype=dtype)
+                3, 3, 64, "resnet_9blocks", norm="instance", gpu_ids=[0])
+            if isinstance(self.transfer_model, torch.nn.DataParallel):
+                self.transfer_model = self.transfer_model.module
             if torch.cuda.is_available():
                 self.transfer_model.cuda()
             self.load_transfer_model()
@@ -61,31 +57,24 @@ class ImitationLearning(Agent):
                 self.writer = SummaryWriter(
                     os.path.join(
                         dir_path+'/runs/',
-                        "carla_transfer_visualize"))
+                        log_name))
                 self.step = 0
 
         self._image_cut = image_cut
 
     def load_model(self):
         if not os.path.exists(self._models_path):
-            raise RuntimeError('failed to find the models path: %s'%self._models_path)
+            raise RuntimeError('failed to find the models path: %s'
+                               % self._models_path)
         checkpoint = torch.load(self._models_path, map_location='cuda:0')
         self.model.load_state_dict(checkpoint['state_dict'])
 
     def load_transfer_model(self):
         if not os.path.exists(self._vrg_models_path):
-            raise RuntimeError('failed to find the models path: %s'%self._vrg_models_path)
-        pretrained_dict = torch.load(self._vrg_models_path, map_location='cuda:0')
-        partial_dict = {}
-        if self.trans_direction == 'B2A':
-            for k, v in pretrained_dict.items():
-                if 'netG_B' in k:
-                    partial_dict[k[7:]] = pretrained_dict[k]
-        if self.trans_direction == 'A2B':
-            for k, v in pretrained_dict.items():
-                if 'netG_A' in k:
-                    partial_dict[k[7:]] = pretrained_dict[k]
-        self.transfer_model.load_state_dict(partial_dict)
+            raise RuntimeError('failed to find the models path: %s'
+                               % self._vrg_models_path)
+        self.transfer_model.load_state_dict(
+            torch.load(self._vrg_models_path, map_location='cuda:0'))
 
     def run_step(self, measurements, sensor_data, directions, target):
 
@@ -149,7 +138,7 @@ class ImitationLearning(Agent):
         with torch.no_grad():
             if self.vrg_transfer:
                 img_ts_trans = img_ts * 2 - 1
-                img_ts_trans = self.transfer_model.forward_seq(img_ts_trans)
+                img_ts_trans = self.transfer_model(img_ts_trans)
                 img_ts_trans = (img_ts_trans + 1) / 2.0
                 if self.visualize:
                     self.writer.add_image("carla_visual/origin",
