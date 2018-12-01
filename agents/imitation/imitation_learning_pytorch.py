@@ -40,8 +40,6 @@ class ImitationLearning(Agent):
         if vrg_transfer:
             self._vrg_models_path = os.path.join(
                 dir_path, vrg_model_path)
-            # dtype = torch.cuda.FloatTensor \
-            #     if torch.cuda.is_available() else torch.FloatTensor
             self.transfer_model = define_G(
                 3, 3, 64, "resnet_9blocks", norm="instance", gpu_ids=[0])
             if isinstance(self.transfer_model, torch.nn.DataParallel):
