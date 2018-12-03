@@ -7,13 +7,13 @@ services:
     networks:
       - carla_net0
     environment:
-      - NVIDIA_VISIBLE_DEVICES=1
+      - NVIDIA_VISIBLE_DEVICES=0
 
   policy_image0:
     image: onlytailei/pytorch:0.4.1-cuda9-tensorboardx
     runtime: nvidia
     environment:
-      - NVIDIA_VISIBLE_DEVICES=1
+      - NVIDIA_VISIBLE_DEVICES=0
     volumes:
       - ${TAI_CARLA}:/home/carla/
     networks:
@@ -22,11 +22,11 @@ services:
     command:
         python run_CIL.py
         --host carla_env0
-        --log-name clear_policy_in_wet_cg_new
-        --weathers 3
-        --model-path "model_policy/clear_policy_last.pth"
+        --log-name domain_random_rain_best_nc_cg
+        --weathers 6
+        --model-path "model_policy/domain_random_best.pth"
         --vrg-transfer
-        --vrg-model-path "model_transfer/clear2wet_cg_G_B.pth"
+        --vrg-model-path "model_transfer/non_croped/clear2rain_cg_G_B.pth"
 
   carla_env1:
     image: carlasim/carla:0.8.2
@@ -35,13 +35,13 @@ services:
     networks:
       - carla_net0
     environment:
-      - NVIDIA_VISIBLE_DEVICES=1
+      - NVIDIA_VISIBLE_DEVICES=0
 
   policy_image1:
     image: onlytailei/pytorch:0.4.1-cuda9-tensorboardx
     runtime: nvidia
     environment:
-      - NVIDIA_VISIBLE_DEVICES=1
+      - NVIDIA_VISIBLE_DEVICES=0
     volumes:
       - ${TAI_CARLA}:/home/carla/
     networks:
@@ -50,63 +50,67 @@ services:
     command:
         python run_CIL.py
         --host carla_env1
-        --log-name clear_policy_in_wet_shift500_new
-        --weathers 3
-        --model-path "model_policy/clear_policy_last.pth"
+        --log-name domain_random_rain_best_nc_shift
+        --weathers 6
+        --model-path "model_policy/domain_random_best.pth"
         --vrg-transfer
-        --vrg-model-path "model_transfer/clear2wet_shift_500_G_B.pth"
+        --vrg-model-path "model_transfer/non_croped/clear2rain_shift_1000_G_B.pth"
 
-  # carla_env2:
-  #   image: carlasim/carla:0.8.2
-  #   runtime: nvidia
-  #   command: ./CarlaUE4.sh -carla-server -fps=30
-  #   networks:
-  #     - carla_net0
-  #   environment:
-  #     - NVIDIA_VISIBLE_DEVICES=3
-  #
-  # policy_image2:
-  #   image: onlytailei/pytorch:0.4.1-cuda9-tensorboardx
-  #   runtime: nvidia
-  #   environment:
-  #     - NVIDIA_VISIBLE_DEVICES=3
-  #   volumes:
-  #     - ${TAI_CARLA}:/home/carla/
-  #   networks:
-  #     - carla_net0
-  #   working_dir: /home/carla/PythonClient/imitation_learning/
-  #   command:
-  #       python run_CIL.py
-  #       --host carla_env2
-  #       --log-name wet_best
-  #       --weathers 3
-  #       --model-path "model_policy/wet_policy_best.pth"
-  #
-  # carla_env3:
-  #   image: carlasim/carla:0.8.2
-  #   runtime: nvidia
-  #   command: ./CarlaUE4.sh -carla-server -fps=30
-  #   networks:
-  #     - carla_net0
-  #   environment:
-  #     - NVIDIA_VISIBLE_DEVICES=3
-  #
-  # policy_image3:
-  #   image: onlytailei/pytorch:0.4.1-cuda9-tensorboardx
-  #   runtime: nvidia
-  #   environment:
-  #     - NVIDIA_VISIBLE_DEVICES=3
-  #   volumes:
-  #     - ${TAI_CARLA}:/home/carla/
-  #   networks:
-  #     - carla_net0
-  #   working_dir: /home/carla/PythonClient/imitation_learning/
-  #   command:
-  #       python run_CIL.py
-  #       --host carla_env3
-  #       --log-name wet_last
-  #       --weathers 3
-  #       --model-path "model_policy/wet_policy_last.pth"
+  carla_env2:
+    image: carlasim/carla:0.8.2
+    runtime: nvidia
+    command: ./CarlaUE4.sh -carla-server -fps=30
+    networks:
+      - carla_net0
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=0
+
+  policy_image2:
+    image: onlytailei/pytorch:0.4.1-cuda9-tensorboardx
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=0
+    volumes:
+      - ${TAI_CARLA}:/home/carla/
+    networks:
+      - carla_net0
+    working_dir: /home/carla/PythonClient/imitation_learning/
+    command:
+        python run_CIL.py
+        --host carla_env0
+        --log-name domain_random_rain_last_nc_cg
+        --weathers 6
+        --model-path "model_policy/domain_random_last.pth"
+        --vrg-transfer
+        --vrg-model-path "model_transfer/non_croped/clear2rain_cg_G_B.pth"
+
+  carla_env3:
+    image: carlasim/carla:0.8.2
+    runtime: nvidia
+    command: ./CarlaUE4.sh -carla-server -fps=30
+    networks:
+      - carla_net0
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=0
+
+  policy_image3:
+    image: onlytailei/pytorch:0.4.1-cuda9-tensorboardx
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=0
+    volumes:
+      - ${TAI_CARLA}:/home/carla/
+    networks:
+      - carla_net0
+    working_dir: /home/carla/PythonClient/imitation_learning/
+    command:
+        python run_CIL.py
+        --host carla_env1
+        --log-name domain_random_rain_last_nc_shift
+        --weathers 6
+        --model-path "model_policy/domain_random_last.pth"
+        --vrg-transfer
+        --vrg-model-path "model_transfer/non_croped/clear2rain_shift_1000_G_B.pth"
 
 networks:
   carla_net0:
