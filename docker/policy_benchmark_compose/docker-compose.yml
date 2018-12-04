@@ -23,9 +23,9 @@ services:
     command:
         python run_CIL.py
         --host carla_env0
-        --log-name domain_random_rain_from_wet_best_crop_cg
+        --log-name domain_random_rain_from_wet_last_crop_cg
         --weathers 6
-        --model-path "model_policy/domain_random_best.pth"
+        --model-path "model_policy/domain_random_last.pth"
         --vrg-transfer
         --vrg-model-path "model_transfer/croped/wet2rain_cg_G_B.pth"
 
@@ -52,9 +52,9 @@ services:
     command:
         python run_CIL.py
         --host carla_env1
-        --log-name domain_random_rain_from_wet_best_crop_shift
+        --log-name domain_random_rain_from_wet_last_crop_shift
         --weathers 6
-        --model-path "model_policy/domain_random_best.pth"
+        --model-path "model_policy/domain_random_last.pth"
         --vrg-transfer
         --vrg-model-path "model_transfer/croped/wet2rain_shift_1000_G_B.pth"
 
@@ -80,7 +80,7 @@ services:
     #working_dir: /home/carla/PythonClient/imitation_learning/
     #command:
         #python run_CIL.py
-        #--host carla_env0
+        #--host carla_env2
         #--log-name domain_random_rain_from_wet_last_crop_cg
         #--weathers 6
         #--model-path "model_policy/domain_random_last.pth"
@@ -109,7 +109,7 @@ services:
     #working_dir: /home/carla/PythonClient/imitation_learning/
     #command:
         #python run_CIL.py
-        #--host carla_env1
+        #--host carla_env3
         #--log-name domain_random_rain_from_wet_last_crop_shift
         #--weathers 6
         #--model-path "model_policy/domain_random_last.pth"
