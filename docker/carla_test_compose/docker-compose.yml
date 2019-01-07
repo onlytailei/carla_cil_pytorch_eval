@@ -24,7 +24,7 @@ services:
       --host carla_env
       --log-name clear2wet
       --weathers 1
-      --model-path "model_policy/wet_policy_last.pth"
+      --model-path "model/policy.pth"
 
 networks:
   carla_net:
