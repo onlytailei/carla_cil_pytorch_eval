@@ -19,4 +19,5 @@ $ python run_CIL.py --log-name local_test --weathers 6 --model-path "model/polic
 
 Policy Training
 ------
-Please reference [carla_cil_pytorh](https://github.com/onlytailei/carla_cil_pytorch)
+Please reference [carla_cil_pytorh](https://github.com/onlytailei/carla_cil_pytorch).    
+For the benchmark results, please check our RA-L paper [VR-Goggles for Robots: Real-to-sim Domain Adaptation for Visual Control](https://ram-lab.com/file/tailei/vr_goggles/index.html).
