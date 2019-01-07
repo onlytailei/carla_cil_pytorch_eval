@@ -25,9 +25,9 @@ services:
       --log-name clear2wet
       --weathers 1
       --model-path "model_policy/wet_policy_last.pth"
-      --vrg-transfer
-      --vrg-model-path "model_transfer/clear2wet_cg_G_A.pth"
-      --visual
+      #--vrg-transfer
+      #--vrg-model-path "model_transfer/clear2wet_cg_G_A.pth"
+      #--visual
 
 # b2a means policy train in A and deploy in B, vice versaize
 
