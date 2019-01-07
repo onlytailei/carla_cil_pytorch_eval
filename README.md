@@ -11,10 +11,11 @@ tensorboardX
 
 Running
 ------
-Basically run:
-
+Start carla simulater and leave your trained policy weight in ***model/policy.pth***
+run:
+```
 $ python run_CIL.py --log-name local_test --weathers 6 --model-path "model/policy.pth"
-
+```
 
 Policy Training
 ------
