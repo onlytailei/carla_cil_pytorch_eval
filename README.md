@@ -5,7 +5,7 @@ A pytorch implementation to evaluate the conditional imitation learning policy i
 
 Requirements
 -------
-pytorch > 0.4.0
+pytorch > 0.4.0    
 tensorboardX
 
 
