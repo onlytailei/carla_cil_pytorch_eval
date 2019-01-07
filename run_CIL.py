@@ -71,18 +71,6 @@ if (__name__ == '__main__'):
         help='torch imitation learning model path (relative in model dir)'
     )
     argparser.add_argument(
-        '--vrg-transfer',
-        default=False,
-        action='store_true',
-        help='If you want to enable model transfer'
-    )
-    argparser.add_argument(
-        '--vrg-model-path',
-        default='model/transfer.pth',
-        type=str,
-        help='vrg transfer model path (relative in model dir)'
-    )
-    argparser.add_argument(
         '--visualize',
         default=False,
         action='store_true',
@@ -98,8 +86,6 @@ if (__name__ == '__main__'):
     agent = ImitationLearning(args.city_name,
                               args.avoid_stopping,
                               args.model_path,
-                              args.vrg_transfer,
-                              args.vrg_model_path,
                               args.visualize,
                               args.log_name
                               )

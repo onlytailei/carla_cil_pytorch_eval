@@ -8,7 +8,6 @@ import numpy as np
 from carla.agent import Agent
 from carla.carla_server_pb2 import Control
 from agents.imitation.modules.carla_net import CarlaNet
-from agents.imitation.modules.networks import define_G
 
 
 class ImitationLearning(Agent):
@@ -16,8 +15,6 @@ class ImitationLearning(Agent):
     def __init__(self, city_name,
                  avoid_stopping=True,
                  model_path="model/policy.pth",
-                 vrg_transfer=False,
-                 vrg_model_path="model/transfer.pth",
                  visualize=False,
                  log_name="test_log",
                  image_cut=[115, 510]):
@@ -36,28 +33,6 @@ class ImitationLearning(Agent):
         self.load_model()
         self.model.eval()
 
-        self.vrg_transfer = vrg_transfer
-        if vrg_transfer:
-            self._vrg_models_path = os.path.join(
-                dir_path, vrg_model_path)
-            self.transfer_model = define_G(
-                3, 3, 64, "resnet_9blocks", norm="instance", gpu_ids=[0])
-            if isinstance(self.transfer_model, torch.nn.DataParallel):
-                self.transfer_model = self.transfer_model.module
-            if torch.cuda.is_available():
-                self.transfer_model.cuda()
-            self.load_transfer_model()
-            self.transfer_model.eval()
-
-            self.visualize = visualize
-            if self.visualize:
-                from tensorboardX import SummaryWriter
-                self.writer = SummaryWriter(
-                    os.path.join(
-                        dir_path+'/runs/',
-                        log_name))
-                self.step = 0
-
         self._image_cut = image_cut
 
     def load_model(self):
@@ -66,13 +41,6 @@ class ImitationLearning(Agent):
                                % self._models_path)
         checkpoint = torch.load(self._models_path, map_location='cuda:0')
         self.model.load_state_dict(checkpoint['state_dict'])
-
-    def load_transfer_model(self):
-        if not os.path.exists(self._vrg_models_path):
-            raise RuntimeError('failed to find the models path: %s'
-                               % self._vrg_models_path)
-        self.transfer_model.load_state_dict(
-            torch.load(self._vrg_models_path, map_location='cuda:0'))
 
     def run_step(self, measurements, sensor_data, directions, target):
 
@@ -134,21 +102,7 @@ class ImitationLearning(Agent):
         speed_ts = torch.from_numpy(speed).cuda()
 
         with torch.no_grad():
-            if self.vrg_transfer:
-                img_ts_trans = img_ts * 2 - 1
-                img_ts_trans = self.transfer_model(img_ts_trans)
-                img_ts_trans = (img_ts_trans + 1) / 2.0
-                if self.visualize:
-                    self.writer.add_image("carla_visual/origin",
-                                          img_ts[0],
-                                          self.step)
-                    self.writer.add_image("carla_visual/trans",
-                                          img_ts_trans[0],
-                                          self.step)
-                    self.step += 1
-                branches, pred_speed = self.model(img_ts_trans, speed_ts)
-            else:
-                branches, pred_speed = self.model(img_ts, speed_ts)
+            branches, pred_speed = self.model(img_ts, speed_ts)
 
         pred_result = branches[0][
             3*control_input:3*(control_input+1)].cpu().numpy()
